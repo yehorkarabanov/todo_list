@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  backend-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/:/code
+    command: python main.py
