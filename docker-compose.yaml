@@ -9,6 +9,7 @@ services:
   backend-api:
     depends_on:
       - redis
+      - postgres
     expose:
       - 8080
     build:
@@ -16,7 +17,18 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./backend/:/code
+      - /app/node_modules
     command: uvicorn main:app --host 0.0.0.0 --port 8080 --reload --proxy-headers
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend/:/app
+    expose:
+      - 3000
+    command: npm start
 
   celery_worker:
     container_name: celery_worker
@@ -59,22 +71,38 @@ services:
       - "80:80"
       - "443:443"
 
-#  nginx:
-#    container_name: "nginx"
-#    image: nginx:1.27.1-alpine
-#    depends_on:
-#      - backend-api
-#      - flower
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#    volumes:
-#      - .proxy/nginx:/etc/nginx/conf.d
-#      - .proxy/certbot/conf:etc/letsencrypt
-#      - .proxy/certbot/www:/var/www/certbot
+  postgres:
+    image: postgres:16.4-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=todolist
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
 
-#  certbot:
-#    image: certbot/certbot:latest
-#    volumes:
-#      - .proxy/certbot/conf:etc/letsencrypt
-#      - .proxy/certbot/www:/var/www/certbot
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    depends_on:
+      - postgres
+    expose:
+      - 80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 8086
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    expose:
+      - 8025
+    ports:
+      - "1025:1025"
+
+
+volumes:
+  postgres_data:
+  pgadmin_data:
