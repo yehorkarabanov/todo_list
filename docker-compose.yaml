@@ -4,21 +4,21 @@ services:
   redis:
     image: redis:7.4.0-alpine
     expose:
-      - 6379
+      - ${REDIS_PORT_INTERNAL}
 
   backend-api:
     depends_on:
       - redis
       - postgres
     expose:
-      - 8080
+      - ${BACKEND_PORT_INTERNAL}
     build:
       context: ./backend
       dockerfile: Dockerfile
     volumes:
       - ./backend/:/code
       - /app/node_modules
-    command: uvicorn main:app --host 0.0.0.0 --port 8080 --reload --proxy-headers
+    command: uvicorn main:app --host 0.0.0.0 --port ${BACKEND_PORT_INTERNAL} --reload --proxy-headers
 
   frontend:
     build:
@@ -27,7 +27,7 @@ services:
     volumes:
       - ./frontend/:/app
     expose:
-      - 3000
+      - ${FRONTEND_PORT_INTERNAL}
     command: npm start
 
   celery_worker:
@@ -45,10 +45,10 @@ services:
   flower:
     container_name: flower
     expose:
-      - 5555
+      - ${FLOWER_PORT_INTERNAL}
     environment:
-      - CELERY_BROKER_URL=redis://redis/0
-      - CELERY_RESULT_BACKEND=redis://redis/0
+      - CELERY_BROKER_URL=redis://redis:${REDIS_PORT_INTERNAL}/0
+      - CELERY_RESULT_BACKEND=redis://redis:${REDIS_PORT_INTERNAL}/0
     depends_on:
       - backend-api
       - celery_worker
@@ -56,7 +56,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    command: celery --broker=redis://redis/0 flower --port=5555 --url-prefix=/flower
+    command: celery --broker=redis://redis:${REDIS_PORT_INTERNAL}/0 flower --port=${FLOWER_PORT_INTERNAL} --url-prefix=/flower
 
   nginx:
     image: nginx:latest
@@ -74,33 +74,33 @@ services:
   postgres:
     image: postgres:16.4-alpine
     ports:
-      - "5432:5432"
+      - ${POSTGRES_PORT}:${POSTGRES_PORT_INTERNAL}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=todolist
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
   pgadmin:
     image: dpage/pgadmin4:latest
     depends_on:
       - postgres
     expose:
-      - 80
+      - ${PGADMIN_PORT_INTERNAL}
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_LISTEN_PORT: 8086
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_LISTEN_PORT: ${PGADMIN_PORT_INTERNAL}
     volumes:
       - pgadmin_data:/var/lib/pgadmin
 
   mailhog:
     image: mailhog/mailhog:latest
     expose:
-      - 8025
+      - ${MAILHOG_UI_PORT_INTERNAL}
     ports:
-      - "1025:1025"
+      - ${MAILHOG_PORT}:${MAILHOG_PORT_INTERNAL}
 
 
 volumes:
