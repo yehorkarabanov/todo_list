@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  frontend:
+    environment:
+      - WDS_SOCKET_HOST=127.0.0.1
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true

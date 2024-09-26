@@ -29,6 +29,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DEBUG=${BACKEND_DEBUG}
     volumes:
       - ./backend/:/code
       - /app/node_modules
@@ -42,7 +43,10 @@ services:
       - ./frontend/:/app
     expose:
       - ${FRONTEND_PORT_INTERNAL}
-    command: npm start
+    environment:
+      - DEBUG=${FRONTEND_DEBUG}
+      - FAST_REFRESH=${FAST_REFRESH}
+    command: npm start -FAST_REFRESH=${FAST_REFRESH}
 
   celery_worker:
     container_name: celery_worker
