@@ -6,7 +6,7 @@ export const NotFound = () => {
       <h1>404</h1>
       <h2>Oops! Page Not Found</h2>
       <p>We can't seem to find the page you're looking for.</p>
-      <a href="/" className={styles.backHome}>Go Back Home</a>
+      <a href="/" className={"btn btn-outline-danger"}>Go Back Home</a>
     </div>
   );
 };

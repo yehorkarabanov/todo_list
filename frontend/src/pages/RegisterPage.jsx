@@ -1,15 +1,13 @@
 import React from "react";
 import {Header} from "../components/Header";
 import {Footer} from "../components/Footer";
-import {Welcome} from "../components/Welcome";
-import {TodoList} from "../components/TodoList";
+import {Register} from "../components/Register";
 
-export const Home = () => {
+export const RegisterPage = () => {
     return (
         <>
             <Header/>
-            <Welcome/>
-            <TodoList/>
+            <Register/>
             <Footer/>
         </>
     )

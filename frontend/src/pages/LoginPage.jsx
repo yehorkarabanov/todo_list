@@ -1,15 +1,13 @@
 import React from "react";
 import {Header} from "../components/Header";
 import {Footer} from "../components/Footer";
-import {Welcome} from "../components/Welcome";
-import {TodoList} from "../components/TodoList";
+import {Login} from "../components/Login";
 
-export const Home = () => {
+export const LoginPage = () => {
     return (
         <>
             <Header/>
-            <Welcome/>
-            <TodoList/>
+            <Login/>
             <Footer/>
         </>
     )
