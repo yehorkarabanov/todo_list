@@ -18,6 +18,7 @@ services:
     environment:
       - REDIS_PORT=${REDIS_PORT_INTERNAL}
       - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
       - PROJECT_NAME=${PROJECT_NAME}
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASSWORD=${SMTP_PASSWORD}
