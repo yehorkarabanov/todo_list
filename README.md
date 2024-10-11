@@ -1,14 +1,14 @@
 
 # TO-DO list
 ## Description
-This is a pet project to practise skils in building web application as fullstack developper.
+This is a pet project to practise skills in building web application as fullstack developer.
 
 
 
 
 ## Overview
 
-This project is comprised of the following languages and libraries:\
+This project comprises the following languages and libraries:\
 1. **Python**:
 * **FastAPI** - Web framework for building APIs with Python.
 * **SqlAlchemy** + **Alembic** - ORM to work with database and manage migrations.
@@ -18,11 +18,12 @@ This project is comprised of the following languages and libraries:\
 2. **JavaScript**:
 * **React** - Development of dynamic and interactive UIs
 * **React-router** - Building multi - paged frontend.
-* **Redux** - Crosspaged data storage.
+* **Redux** - Cross-paged data storage.
 * **Axious** - HTTP requests to backend.
-* **Sass** - Effisint way to write scc.
-3. **NGINX** - reverse proxy to route traffic to the FastAPI backend and serve the frontend**. Nginx also handles HTTPS.
-4. **Docker** - containerize the application
+* **Sass** - Efficients way to write scc.
+3. **NGINX** - Reverse proxy to route traffic to the FastAPI backend and serve the frontend**. Nginx also handles HTTPS.
+4. **Docker** - Containerize the application
+5. **Redis** - Cache and task queue storage.
 
 
 ## Installation
