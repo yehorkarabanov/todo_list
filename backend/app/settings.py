@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic_settings import BaseSettings
 import os
 
@@ -7,6 +9,12 @@ class Settings(BaseSettings):
     SECRET_KEY: str = os.getenv("SECRET_KEY", "secret")
     ALGORITHM: str = os.getenv("ALGORITHM", "HS256")
     PROJECT_NAME: str = os.getenv("PROJECT_NAME", "todo-todo_list")
+    BACKEND_CORS_ORIGINS: List[str] = os.getenv(
+        "BACKEND_CORS_ORIGINS",
+        ["*"],
+    )
+    ACCESS_TOKEN_EXPIRE_SECONDS: int = 30 * 60
+    REFRESH_TOKEN_EXPIRE_SECONDS: int = 15 * 24 * 60 * 60
 
     SMTP_USER: str = os.getenv("SMTP_USER", "test@test.com")
     SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "password")

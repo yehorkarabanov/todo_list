@@ -33,4 +33,4 @@ class Base(AsyncAttrs, DeclarativeBase):
     async def find_by_id(cls, db: AsyncSession, id: int):
         query = select(cls).where(cls.id == id)
         result = await db.execute(query)
-        return result.scalar().first()
+        return result.scalars().first()

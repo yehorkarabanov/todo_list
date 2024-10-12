@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-from app.config import settings
+from app.settings import settings
 from app.database.base import Base
 from app.user.models import User, Task  # noqa: F401
 
