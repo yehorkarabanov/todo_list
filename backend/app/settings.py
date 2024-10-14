@@ -19,7 +19,9 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_SECONDS: int = os.getenv("REFRESH_TOKEN_EXPIRE_SECONDS", 86400)
     DOMAIN: str = os.getenv("DOMAIN", "https://localhost")
     VERIFY_MAIL_PATH: str = os.getenv("VERIFY_MAIL_PATH", "/api/user/verify/")
-    VERIFY_MAIL_URL: str = f"https://{DOMAIN}{VERIFY_MAIL_PATH}"  # TODO redo to link for frontend verification page
+    VERIFY_MAIL_URL: str = f"https://{DOMAIN}{VERIFY_MAIL_PATH}"
+    PASSWORD_RESET_PATH: str = os.getenv("PASSWORD_RESET_PATH", "/api/user/password-reset/")
+    PASSWORD_RESET_URL: str = f"https://{DOMAIN}{PASSWORD_RESET_PATH}"
 
     SMTP_USER: str = os.getenv("SMTP_USER", "test@test.com")
     SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "password")

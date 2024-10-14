@@ -22,9 +22,16 @@ class DatabaseHelper:
         return session
 
     async def session_dependency(self) -> AsyncSession:
-        async with self.session_dependency() as session:
+        """Session dependency for FastAPI with proper session management."""
+        session = self.get_scoped_session()  # Get the scoped session
+        try:
             yield session
-            await session.close()
+        except Exception as e:
+            # Rollback in case of an error
+            await session.rollback()
+            raise e  # You can log the exception here if needed
+        finally:
+            await session.close()  # Close the session
 
 
 db_helper = DatabaseHelper(settings.DATABASE_URL, settings.DEBUG)

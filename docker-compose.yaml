@@ -36,6 +36,7 @@ services:
       - ACCESS_TOKEN_EXPIRE_SECONDS=${ACCESS_TOKEN_EXPIRE_SECONDS}
       - REFRESH_TOKEN_EXPIRE_SECONDS=${REFRESH_TOKEN_EXPIRE_SECONDS}
       - VERIFY_MAIL_PATH=${VERIFY_MAIL_PATH}
+      - PASSWORD_RESET_PATH=${PASSWORD_RESET_PATH}
     volumes:
       - ./backend/:/code
     command: uvicorn main:app --host 0.0.0.0 --port ${BACKEND_PORT_INTERNAL} --reload --proxy-headers
