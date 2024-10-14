@@ -15,10 +15,11 @@ class Settings(BaseSettings):
         "BACKEND_CORS_ORIGINS",
         ["*"],
     )
-    ACCESS_TOKEN_EXPIRE_SECONDS: int = 30 * 60
-    REFRESH_TOKEN_EXPIRE_SECONDS: int = 15 * 24 * 60 * 60
+    ACCESS_TOKEN_EXPIRE_SECONDS: int = os.getenv("ACCESS_TOKEN_EXPIRE_SECONDS", 1800)
+    REFRESH_TOKEN_EXPIRE_SECONDS: int = os.getenv("REFRESH_TOKEN_EXPIRE_SECONDS", 86400)
     DOMAIN: str = os.getenv("DOMAIN", "https://localhost")
-    VERIFY_MAIL_URL: str = f"https://{DOMAIN}/api/user/verify/"  # TODO redo to link for frontend verification page
+    VERIFY_MAIL_PATH: str = os.getenv("VERIFY_MAIL_PATH", "/api/user/verify/")
+    VERIFY_MAIL_URL: str = f"https://{DOMAIN}{VERIFY_MAIL_PATH}"  # TODO redo to link for frontend verification page
 
     SMTP_USER: str = os.getenv("SMTP_USER", "test@test.com")
     SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "password")
