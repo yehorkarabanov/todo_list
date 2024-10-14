@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List
 
 from pydantic_settings import BaseSettings
@@ -6,6 +7,7 @@ import os
 
 class Settings(BaseSettings):
     REDIS_PORT: int = os.getenv("REDIS_PORT", 6379)
+    REDIS_URL: str = f"redis://redis:{REDIS_PORT}/0"
     SECRET_KEY: str = os.getenv("SECRET_KEY", "secret")
     ALGORITHM: str = os.getenv("ALGORITHM", "HS256")
     PROJECT_NAME: str = os.getenv("PROJECT_NAME", "todo-todo_list")
@@ -15,6 +17,8 @@ class Settings(BaseSettings):
     )
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 30 * 60
     REFRESH_TOKEN_EXPIRE_SECONDS: int = 15 * 24 * 60 * 60
+    DOMAIN: str = os.getenv("DOMAIN", "https://localhost")
+    VERIFY_MAIL_URL: str = f"https://{DOMAIN}/api/user/verify/"  # TODO redo to link for frontend verification page
 
     SMTP_USER: str = os.getenv("SMTP_USER", "test@test.com")
     SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "password")
@@ -30,6 +34,9 @@ class Settings(BaseSettings):
     DATABASE_URL: str = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@postgres:{POSTGRES_PORT}/{POSTGRES_DB}"
 
     DEBUG: bool = os.getenv("DEBUG", False)
+
+    BASE_DIR: Path = Path(__file__).resolve().parent
+    ROOT_DIR: Path = Path(__file__).resolve().parent.parent
 
 
 settings = Settings()

@@ -8,7 +8,7 @@ from app.database.base import Base
 class User(Base):
     email: Mapped[str] = mapped_column(unique=True, index=True)
     password: Mapped[str]
-    is_verified: Mapped[bool] = mapped_column()
+    is_verified: Mapped[bool] = mapped_column(default=False)
     tasks: Mapped[list["Task"]] = relationship(back_populates="user")
 
     @classmethod

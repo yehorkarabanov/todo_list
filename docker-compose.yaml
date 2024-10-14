@@ -32,6 +32,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - DEBUG=${BACKEND_DEBUG}
       - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
+      - DOMAIN=${DOMAIN}
     volumes:
       - ./backend/:/code
     command: uvicorn main:app --host 0.0.0.0 --port ${BACKEND_PORT_INTERNAL} --reload --proxy-headers
@@ -42,7 +43,6 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./frontend/:/app
-      - /app/node_modules
     expose:
       - ${FRONTEND_PORT_INTERNAL}
     environment:

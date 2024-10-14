@@ -21,3 +21,7 @@ class UserRegister(UserSchema):
         if "password" in info.data and v != info.data["password"]:
             raise ValueError("passwords do not match")
         return v
+
+
+class URLToken(BaseModel):
+    token: str
