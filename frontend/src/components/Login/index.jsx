@@ -2,14 +2,39 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import * as Yup from 'yup';
-
-// Yup validation schema
-const LoginSchema = Yup.object().shape({
-    email: Yup.string().email('Invalid email address').required('Email is required'),
-    password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-});
+import apiInstance from "../../utils/axios";
+import {useDispatch} from "react-redux";
+import {setTokens} from "../../redux/slices/userSlice";
+import {useNavigate} from "react-router-dom";
 
 export const Login = () => {
+    const dispatch = useDispatch();
+
+    const LoginSchema = Yup.object().shape({
+        email: Yup.string()
+            .email('Invalid email address')
+            .required('Email is required'),
+        password: Yup.string()
+            .min(6, 'Password must be at least 6 characters')
+            .required('Password is required')
+            .test('apiValidation', 'Invalid username or password', async function (value) {
+                try {
+                    const response = await apiInstance.post('user/login', {
+                        email: this.parent.email,
+                        password: value
+                    });
+                    dispatch(setTokens(response.data));
+
+                    return true;
+                } catch (error) {
+                    console.log(error);
+                    return this.createError({
+                        path: 'email',
+                        message: 'Invalid username or password'
+                    });
+                }
+            }),
+    });
     // Initial values for the form
     const initialValues = {
         email: '',
@@ -17,9 +42,9 @@ export const Login = () => {
     };
 
     // Form submit handler
-    const handleSubmit = (values, {resetForm}) => {
-        console.log('Form values:', values);
-        resetForm();  // Reset the form after submission
+    const navigate = useNavigate();
+    const handleSubmit = async (values) => {
+        navigate("/");
     };
 
     return (
@@ -31,6 +56,8 @@ export const Login = () => {
                     initialValues={initialValues}
                     validationSchema={LoginSchema}
                     onSubmit={handleSubmit}
+                    validateOnChange={false}
+                    validateOnBlur={false}
                 >
                     {({isSubmitting}) => (
                         <Form>

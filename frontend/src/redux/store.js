@@ -1,13 +1,13 @@
 import {configureStore} from "@reduxjs/toolkit";
+import userSlice from "./slices/userSlice";
 import storage from 'redux-persist/lib/storage';
 import {persistCombineReducers} from 'redux-persist';
-import userSlice from "./slices/userSlice";
 
 const persistConfig = {
     key: 'root',
     version: 1,
     storage,
-    // blacklist: ['product']
+    blacklist: ['user']
 };
 
 export const store = configureStore({

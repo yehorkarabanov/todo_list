@@ -70,7 +70,6 @@ async def login(
         {
             "access_token": access_token,
             "refresh_token": refresh_token,
-            "user": {"email": user.email, "id": user.id},
         }
     )
 

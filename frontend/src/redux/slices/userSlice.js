@@ -1,18 +1,40 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import apiInstance from "../../utils/axios";
+
+export const checkRToken = createAsyncThunk('user/checkRToken', async (params, {dispatch, getState}) => {
+    const state = getState();
+    if (JSON.parse(atob(state.user.refresh.split('.')[1])).exp < Math.floor(Date.now() / 1000)) {
+        dispatch(logOut());
+    }
+});
+
+export const checkAToken = createAsyncThunk('user/checkAToken', async (params, {dispatch, getState}) => {
+    await dispatch(checkRToken());
+    const state = getState();
+    if (JSON.parse(atob(state.user.access.split('.')[1])).exp < Math.floor(Date.now() / 1000)) {
+        const res = await apiInstance.post("user/refresh", {
+            refresh: state.user.refresh,
+        });
+        dispatch(setTokens(res.data));
+    }
+});
+
+export const userlogin = createAsyncThunk('user/userlogin', async (params, {dispatch, getState}) => {
+    const res = await apiInstance.post("user/login", {
+        email:params.email,
+        pasword:params.password,
+    });
+    console.log(res);
+    // dispatch(setTokens(res.data));
+
+});
+
 
 const initialState = {
     refresh: null,
     access: null,
-    userdata: {
-        gotten: false,
-        username: "",
-        email: "",
-        phone: "",
-        last_name: "",
-        name: "",
-    },
+    email: "",
     isLogin: false,
-    loading: false,
 }
 
 const userSlice = createSlice({
@@ -20,50 +42,21 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         setTokens(state, action) {
-            state.refresh = action.payload.refresh;
-            state.access = action.payload.access;
-            const data = JSON.parse(atob(action.payload.refresh.split('.')[1]));
-            state.userdata.username = data.username;
-            state.userdata.email = data.email;
+            state.access = action.payload.access_token;
+            const data = JSON.parse(atob(action.payload.access_token.split('.')[1]));
+            state.email = data.user.email;
             state.isLogin = true;
+            if (action.payload.refresh_token) {
+                state.refresh = action.payload.refresh_token;
+            }
         },
         logOut(state, action) {
             state.refresh = null;
             state.access = null;
-            state.userdata = {
-                gotten: false,
-                username: "",
-                email: "",
-                phone: "",
-                last_name: "",
-                name: "",
-            };
+            state.email = "";
             state.isLogin = false;
         },
-        setExtraUserData(state, action) {
-            state.userdata = {
-                username: state.userdata.username,
-                email: action.payload.email,
-                phone: action.payload.phone,
-                last_name: action.payload.last_name,
-                name: action.payload.name,
-                gotten: true,
-            };
-        },
     },
-    // extraReducers: (builder) => {
-    //     builder
-    //         .addCase(checkRToken.pending, (state) => {
-    //             state.loading = true;
-    //         })
-    //         .addCase(checkRToken.fulfilled, (state) => {
-    //             state.loading = false;
-    //         })
-    //         .addCase(checkRToken.rejected, (state) => {
-    //             state.loading = false;
-    //         })
-    // },
-
 });
-export const {setTokens, logOut, setExtraUserData} = userSlice.actions;
+export const {setTokens, logOut} = userSlice.actions;
 export default userSlice.reducer;
