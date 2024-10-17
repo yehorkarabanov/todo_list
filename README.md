@@ -8,7 +8,7 @@ This is a pet project to practise skills in building web application as fullstac
 
 ## Overview
 
-This project comprises the following languages and libraries:\
+This project comprises the following languages and libraries:
 1. **Python**:
 * **FastAPI** - Web framework for building APIs with Python.
 * **SqlAlchemy** + **Alembic** - ORM to work with database and manage migrations.

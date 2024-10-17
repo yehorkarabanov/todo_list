@@ -2,17 +2,48 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import * as Yup from 'yup';
-
-// Yup validation schema for the Register form
-const RegisterSchema = Yup.object().shape({
-    email: Yup.string().email('Invalid email address').required('Email is required'),
-    password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-    confirmPassword: Yup.string()
-        .oneOf([Yup.ref('password'), null], 'Passwords must match')
-        .required('Confirm password is required'),
-});
+import apiInstance from "../../utils/axios";
+import {setTokens} from "../../redux/slices/userSlice";
+import {useDispatch} from "react-redux";
+import {useNavigate} from "react-router-dom";
+import {VERIFY_MAIL_URL} from "../../utils/settings";
 
 export const Register = () => {
+    const [isButtonClicked, setIsButtonCliced] = React.useState(false);
+    const chnageButtonClicked = () => {
+        setIsButtonCliced(true);
+    };
+
+    // Yup validation schema for the Register form
+    const RegisterSchema = Yup.object().shape({
+        email: Yup.string().email('Invalid email address').required('Email is required'),
+        password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+        confirmPassword: Yup.string()
+            .oneOf([Yup.ref('password'), null], 'Passwords must match')
+            .required('Confirm password is required').test('apiValidation', 'Invalid username or password', async function (value) {
+                console.log(VERIFY_MAIL_URL);
+                if (isButtonClicked) {
+                    try {
+                        const response = await apiInstance.post('user/register', {
+                            email: this.parent.email,
+                            password: this.parent.password,
+                            confirm_password: value,
+                        });
+
+                        setIsButtonCliced(false);
+                        return true;
+                    } catch (error) {
+                        setIsButtonCliced(false);
+                        console.log(error);
+                        return this.createError({
+                            path: 'email',
+                            message: 'Invalid username or password'
+                        });
+                    }
+                }
+                return true;
+            }),
+    });
     // Initial values for the form
     const initialValues = {
         email: '',
@@ -20,10 +51,10 @@ export const Register = () => {
         confirmPassword: '',
     };
 
+    const navigate = useNavigate();
     // Form submit handler
     const handleSubmit = (values, {resetForm}) => {
-        console.log('Form values:', values);
-        resetForm();  // Reset the form after submission
+        navigate(VERIFY_MAIL_URL);
     };
 
     return (
@@ -76,7 +107,8 @@ export const Register = () => {
 
                             {/* Register Button */}
                             <div className="d-grid">
-                                <button type="submit" className="btn btn-outline-primary" disabled={isSubmitting}>
+                                <button type="submit" className="btn btn-outline-primary" disabled={isSubmitting}
+                                        onClick={chnageButtonClicked}>
                                     {isSubmitting ? 'Registering...' : 'Register'}
                                 </button>
                             </div>

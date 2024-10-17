@@ -107,7 +107,7 @@ async def register(
     await user.save(session)
 
     token = create_url_safe_token({"email": user_data["email"], "id": str(user.id)})
-    link = f"{settings.VERIFY_MAIL_URL}{token}"
+    link = f"{settings.VERIFY_MAIL_URL}/{token}"
 
     user_verify_mail_event.delay(
         user_data["email"],
@@ -139,7 +139,24 @@ async def verify_user(
 
     user.is_verified = True
     await user.save(session)
-    return {"message": "Account Verified"}
+    access_token = create_access_token(
+        user_data={
+            "email": user.email,
+            "user_id": str(user.id),
+        }
+    )
+    refresh_token = create_refresh_token(
+        user_data={
+            "email": user.email,
+            "user_id": str(user.id),
+        }
+    )
+    return JSONResponse(
+        {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+        }
+    )
 
 
 @router.post("/logout")
@@ -161,7 +178,7 @@ async def password_reset_request(
         )
 
     token = create_url_safe_token({"email": email})
-    link = f"{settings.PASSWORD_RESET_URL}{token}"
+    link = f"{settings.PASSWORD_RESET_URL}/{token}"
 
     user_verify_mail_event.delay(
         email,

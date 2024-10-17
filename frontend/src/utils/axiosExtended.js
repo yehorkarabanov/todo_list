@@ -1,7 +1,7 @@
 import {store} from "../redux/store";
 import {checkAToken} from "../redux/slices/userSlice";
 import axios from "axios";
-import {baseAxiosSettings} from "./axios";
+import {baseAxiosSettings} from "./settings";
 
 export const apiLoginInstance = async () => {
     await store.dispatch(checkAToken());

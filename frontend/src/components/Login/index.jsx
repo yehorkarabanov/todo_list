@@ -10,6 +10,11 @@ import {useNavigate} from "react-router-dom";
 export const Login = () => {
     const dispatch = useDispatch();
 
+    const [isButtonClicked, setIsButtonCliced] = React.useState(false);
+    const chnageButtonClicked = () => {
+        setIsButtonCliced(true);
+    };
+
     const LoginSchema = Yup.object().shape({
         email: Yup.string()
             .email('Invalid email address')
@@ -18,21 +23,26 @@ export const Login = () => {
             .min(6, 'Password must be at least 6 characters')
             .required('Password is required')
             .test('apiValidation', 'Invalid username or password', async function (value) {
-                try {
-                    const response = await apiInstance.post('user/login', {
-                        email: this.parent.email,
-                        password: value
-                    });
-                    dispatch(setTokens(response.data));
+                if(isButtonClicked) {
+                    try {
+                        const response = await apiInstance.post('user/login', {
+                            email: this.parent.email,
+                            password: value
+                        });
+                        dispatch(setTokens(response.data));
 
-                    return true;
-                } catch (error) {
-                    console.log(error);
-                    return this.createError({
-                        path: 'email',
-                        message: 'Invalid username or password'
-                    });
+                        setIsButtonCliced(false);
+                        return true;
+                    } catch (error) {
+                        setIsButtonCliced(false);
+                        console.log(error);
+                        return this.createError({
+                            path: 'email',
+                            message: 'Invalid username or password'
+                        });
+                    }
                 }
+                return true;
             }),
     });
     // Initial values for the form
@@ -56,8 +66,6 @@ export const Login = () => {
                     initialValues={initialValues}
                     validationSchema={LoginSchema}
                     onSubmit={handleSubmit}
-                    validateOnChange={false}
-                    validateOnBlur={false}
                 >
                     {({isSubmitting}) => (
                         <Form>
@@ -87,7 +95,8 @@ export const Login = () => {
 
                             {/* Login Button */}
                             <div className="d-grid">
-                                <button type="submit" className="btn btn-outline-primary" disabled={isSubmitting}>
+                                <button type="submit" className="btn btn-outline-primary" disabled={isSubmitting}
+                                onClick={chnageButtonClicked}>
                                     {isSubmitting ? 'Logging in...' : 'Login'}
                                 </button>
                             </div>

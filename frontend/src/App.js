@@ -1,20 +1,22 @@
-import logo from './logo.svg';
 import {Route, Routes} from "react-router-dom";
 import {Home} from "./pages/Home";
 import {NotFound} from "./components/NotFound";
 import {LoginPage} from "./pages/LoginPage";
 import {RegisterPage} from "./pages/RegisterPage";
+import {LOGIN_PATH, REGISTER_PATH, USER_PATH, VERIFY_MAIL_PATH} from "./utils/settings";
+import {UserVerifyPage} from "./pages/UserVerifyPage";
 
 function App() {
-  return (
-    <Routes>
-      <Route path={"/"} element={<Home/>} />
-      <Route path={"/login"} element={<LoginPage/>} />
-      <Route path={"/register"} element={<RegisterPage/>} />
-      <Route path={"/not-found"} element={<NotFound />}/>
-      <Route path={"*"} element={<NotFound/>}/>
-    </Routes>
-  );
+    return (
+        <Routes>
+            <Route path={"/"} element={<Home/>}/>
+            <Route path={LOGIN_PATH} element={<LoginPage/>}/>
+            <Route path={REGISTER_PATH} element={<RegisterPage/>}/>
+            <Route path={VERIFY_MAIL_PATH + "/:token"} element={<UserVerifyPage/>}/>
+            <Route path={"/not-found"} element={<NotFound/>}/>
+            <Route path={"*"} element={<NotFound/>}/>
+        </Routes>
+    );
 }
 
 export default App;

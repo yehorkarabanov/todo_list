@@ -1,5 +1,6 @@
 import React from "react";
 import {Link} from "react-router-dom";
+import {LOGIN_PATH, REGISTER_PATH} from "../../utils/settings";
 
 export const Footer = () => {
     return (
@@ -9,13 +10,13 @@ export const Footer = () => {
                     <Link to={"/"} className={`nav-link px-2 text-muted`}>Home</Link>
                 </li>
                 <li className={`nav-item`}>
-                    <Link to={"/login"} className={`nav-link px-2 text-muted`}>Login</Link>
+                    <Link to={LOGIN_PATH} className={`nav-link px-2 text-muted`}>Login</Link>
                 </li>
                 <li className={`nav-item`}>
                     <Link to={"/logout"} className={`nav-link px-2 text-muted`}>Logout</Link>
                 </li>
                 <li className={`nav-item`}>
-                    <Link to={"/register"} className={`nav-link px-2 text-muted`}>Register</Link>
+                    <Link to={REGISTER_PATH} className={`nav-link px-2 text-muted`}>Register</Link>
                 </li>
             </ul>
             <p className={`text-center text-muted`}>© {new Date().getFullYear()} TO-DO list, Inc</p>
