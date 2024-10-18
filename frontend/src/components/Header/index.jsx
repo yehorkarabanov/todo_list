@@ -2,8 +2,8 @@ import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Link} from "react-router-dom";
 import styles from './Header.module.scss';
-import {checkRToken} from "../../redux/slices/userSlice";
-import {LOGIN_PATH, REGISTER_PATH} from "../../utils/settings";
+import {checkAToken, checkRToken} from "../../redux/slices/userSlice";
+import {LOGIN_PATH, REGISTER_PATH, USER_PATH} from "../../utils/settings";
 
 export const Header = () => {
     const dispatch = useDispatch();
@@ -33,7 +33,10 @@ export const Header = () => {
                             </div>
                         </li>
                         {user.isLogin ?
+                            <>
                             <li><Link to={"/"}>{user.email}</Link></li>
+                            <li><Link to={USER_PATH+"/logout"}>Logout</Link></li>
+                            </>
                             :
                             <>
                                 <li><Link to={LOGIN_PATH}>Login</Link></li>

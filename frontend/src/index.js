@@ -11,13 +11,13 @@ import {store} from "./redux/store";
 const root = ReactDOM.createRoot(document.getElementById('root'));
 let persistor = persistStore(store);
 root.render(
-  <React.StrictMode>
-      <Provider store={store}>
-          <PersistGate persistor={persistor}>
-              <BrowserRouter>
-                  <App/>
-              </BrowserRouter>
-          </PersistGate>
-      </Provider>
-  </React.StrictMode>
+    <React.StrictMode>
+        <Provider store={store}>
+            <PersistGate persistor={persistor}>
+                <BrowserRouter>
+                    <App/>
+                </BrowserRouter>
+            </PersistGate>
+        </Provider>
+    </React.StrictMode>
 );

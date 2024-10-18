@@ -2,10 +2,11 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import * as Yup from 'yup';
-import apiInstance from "../../utils/axios";
 import {useDispatch} from "react-redux";
 import {setTokens} from "../../redux/slices/userSlice";
 import {useNavigate} from "react-router-dom";
+import axios from "axios";
+import {baseAxiosSettings} from "../../utils/settings";
 
 export const Login = () => {
     const dispatch = useDispatch();
@@ -25,6 +26,7 @@ export const Login = () => {
             .test('apiValidation', 'Invalid username or password', async function (value) {
                 if(isButtonClicked) {
                     try {
+                        const apiInstance = axios.create(baseAxiosSettings);
                         const response = await apiInstance.post('user/login', {
                             email: this.parent.email,
                             password: value
@@ -58,7 +60,7 @@ export const Login = () => {
     };
 
     return (
-        <div className="container d-flex justify-content-center align-items-center mt-5">
+        <div className="container d-flex justify-content-center align-items-center mt-5" style={{minHeight: "600px"}}>
             <div className="col-md-4">
                 <h3 className="text-center mb-4">Login</h3>
 

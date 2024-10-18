@@ -1,5 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import apiInstance from "../../utils/axios";
+import axios from "axios";
+import {baseAxiosSettings, USER_PATH} from "../../utils/settings";
+import {apiLoginInstance} from "../utilsRedux/axios";
 
 export const checkRToken = createAsyncThunk('user/checkRToken', async (params, {dispatch, getState}) => {
     const state = getState();
@@ -12,21 +14,25 @@ export const checkAToken = createAsyncThunk('user/checkAToken', async (params, {
     await dispatch(checkRToken());
     const state = getState();
     if (JSON.parse(atob(state.user.access.split('.')[1])).exp < Math.floor(Date.now() / 1000)) {
+        const apiInstance = axios.create(baseAxiosSettings);
         const res = await apiInstance.post("user/refresh", {
-            refresh: state.user.refresh,
+            refresh_token: state.user.refresh,
         });
         dispatch(setTokens(res.data));
     }
 });
 
-export const userlogin = createAsyncThunk('user/userlogin', async (params, {dispatch, getState}) => {
-    const res = await apiInstance.post("user/login", {
-        email:params.email,
-        pasword:params.password,
-    });
-    console.log(res);
-    // dispatch(setTokens(res.data));
-
+export const fullLogOut = createAsyncThunk("user/fullLogOut", async (params, {dispatch, getState}) => {
+    const state = getState();
+    try {
+        const instance = await dispatch(apiLoginInstance());
+        const res = await instance.payload.post(USER_PATH + "/logout", {
+            refresh_token: state.user.refresh
+        });
+        dispatch(logOut());
+    } catch (e) {
+        console.log(e);
+    }
 });
 
 

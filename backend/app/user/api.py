@@ -1,9 +1,8 @@
-from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import JSONResponse
 from app.settings import settings
-from app.user.dependencies import RefreshTokenBearer, AccessTokenBearer
+from app.user.dependencies import AccessTokenBearer
 from app.user.hash import get_password_hash
 from app.user.schemas import (
     UserSchema,
@@ -11,32 +10,21 @@ from app.user.schemas import (
     URLToken,
     EmailData,
     PasswordReset,
+    RefreshToken,
 )
 from app.user.auth import (
     create_access_token,
     create_refresh_token,
     create_url_safe_token,
     decode_url_safe_token,
+    decode_token,
 )
 from app.database import db_helper
 from app.user import models
 from app.celery.worker import user_verify_mail_event
-from app.database.redis import add_token_jti_to_blacklist
+from app.database.redis import add_token_jti_to_blacklist, check_token_in_blacklist
 
 router = APIRouter(prefix="/user")
-
-
-@router.post("/mail_test")
-async def send_mail(email: str):
-    user_verify_mail_event.delay(
-        [
-            email,
-        ],
-        "Mail test",
-        "https://localhost",
-    )
-
-    return {"message": "Email sent successfully"}
 
 
 @router.post("/login")
@@ -75,15 +63,21 @@ async def login(
 
 
 @router.post("/refresh")
-async def refresh_token(token_details: dict = Depends(RefreshTokenBearer())):
-    if datetime.fromtimestamp(token_details["exp"], tz=timezone.utc) < datetime.now(
-        timezone.utc
-    ):
+async def refresh_token(token: RefreshToken):
+    token_data = decode_token(token.refresh_token)
+    if not token_data:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token"
         )
-
-    new_access_token = create_access_token(token_details["user"])
+    if token_data and not token_data["type"] == "refresh":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Refresh token required"
+        )
+    if await check_token_in_blacklist(token_data["jti"]):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token"
+        )
+    new_access_token = create_access_token(token_data["user"])
     return JSONResponse(content={"access_token": new_access_token})
 
 
@@ -160,9 +154,11 @@ async def verify_user(
 
 
 @router.post("/logout")
-async def logout(token_details: dict = Depends(AccessTokenBearer())):
-    jti = token_details["jti"]
-    await add_token_jti_to_blacklist(jti)
+async def logout(
+    refresh: RefreshToken, access_token_details: dict = Depends(AccessTokenBearer())
+):
+    refresh_token_details = decode_token(refresh.refresh_token)
+    await add_token_jti_to_blacklist((access_token_details["jti"], refresh_token_details["jti"]))
     return {"message": "Logged out"}
 
 

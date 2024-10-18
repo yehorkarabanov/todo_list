@@ -2,11 +2,9 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import * as Yup from 'yup';
-import apiInstance from "../../utils/axios";
-import {setTokens} from "../../redux/slices/userSlice";
-import {useDispatch} from "react-redux";
 import {useNavigate} from "react-router-dom";
-import {VERIFY_MAIL_URL} from "../../utils/settings";
+import {baseAxiosSettings, VERIFY_MAIL_URL} from "../../utils/settings";
+import axios from "axios";
 
 export const Register = () => {
     const [isButtonClicked, setIsButtonCliced] = React.useState(false);
@@ -24,6 +22,7 @@ export const Register = () => {
                 console.log(VERIFY_MAIL_URL);
                 if (isButtonClicked) {
                     try {
+                        const apiInstance = axios.create(baseAxiosSettings);
                         const response = await apiInstance.post('user/register', {
                             email: this.parent.email,
                             password: this.parent.password,
@@ -58,7 +57,7 @@ export const Register = () => {
     };
 
     return (
-        <div className="container d-flex justify-content-center align-items-center mt-5">
+        <div className="container d-flex justify-content-center align-items-center mt-5" style={{minHeight: "600px"}}>
             <div className="col-md-4">
                 <h3 className="text-center mb-4">Register</h3>
 

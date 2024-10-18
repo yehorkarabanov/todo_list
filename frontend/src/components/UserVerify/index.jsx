@@ -1,10 +1,10 @@
 import React, {useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import apiInstance from "../../utils/axios";
-import {API_URL, VERIFY_MAIL_PATH} from "../../utils/settings";
+import {API_URL, baseAxiosSettings, VERIFY_MAIL_PATH} from "../../utils/settings";
 import {useDispatch} from "react-redux";
 import {setTokens} from "../../redux/slices/userSlice";
 import {delay} from "lodash"
+import axios from "axios";
 
 export const UserVerify = () => {
     const dispatch = useDispatch();
@@ -15,6 +15,7 @@ export const UserVerify = () => {
 
     const handleVerifyEmail = async () => {
         try {
+            const apiInstance = axios.create(baseAxiosSettings);
             const response = await apiInstance.post(API_URL + VERIFY_MAIL_PATH, {
                 token: token
             });
@@ -34,7 +35,7 @@ export const UserVerify = () => {
     };
 
     return (
-        <div className="container text-center mt-5">
+        <div className="container text-center mt-5" style={{minHeight: "600px"}}>
             <h1>{message}</h1>
             {!isVerified && (
                 <button

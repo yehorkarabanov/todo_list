@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {LOGIN_PATH, REGISTER_PATH} from "../../utils/settings";
+
 
 export const Footer = () => {
     return (

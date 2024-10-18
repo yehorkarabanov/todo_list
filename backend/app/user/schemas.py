@@ -46,3 +46,7 @@ class PasswordReset(URLToken):
         if "password" in info.data and v != info.data["password"]:
             raise ValueError("passwords do not match")
         return v
+
+
+class RefreshToken(BaseModel):
+    refresh_token: str

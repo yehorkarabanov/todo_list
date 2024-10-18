@@ -5,6 +5,7 @@ import {LoginPage} from "./pages/LoginPage";
 import {RegisterPage} from "./pages/RegisterPage";
 import {LOGIN_PATH, REGISTER_PATH, USER_PATH, VERIFY_MAIL_PATH} from "./utils/settings";
 import {UserVerifyPage} from "./pages/UserVerifyPage";
+import {LogoutPage} from "./pages/LogoutPage";
 
 function App() {
     return (
@@ -12,6 +13,7 @@ function App() {
             <Route path={"/"} element={<Home/>}/>
             <Route path={LOGIN_PATH} element={<LoginPage/>}/>
             <Route path={REGISTER_PATH} element={<RegisterPage/>}/>
+            <Route path={USER_PATH + "/logout"} element={<LogoutPage/>}/>
             <Route path={VERIFY_MAIL_PATH + "/:token"} element={<UserVerifyPage/>}/>
             <Route path={"/not-found"} element={<NotFound/>}/>
             <Route path={"*"} element={<NotFound/>}/>
