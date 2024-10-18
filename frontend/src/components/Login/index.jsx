@@ -6,7 +6,7 @@ import {useDispatch} from "react-redux";
 import {setTokens} from "../../redux/slices/userSlice";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import {baseAxiosSettings} from "../../utils/settings";
+import {baseAxiosSettings, USER_PATH} from "../../utils/settings";
 
 export const Login = () => {
     const dispatch = useDispatch();
@@ -37,7 +37,7 @@ export const Login = () => {
                         return true;
                     } catch (error) {
                         setIsButtonCliced(false);
-                        console.log(error);
+                        console.log(error.response.data);
                         return this.createError({
                             path: 'email',
                             message: 'Invalid username or password'
@@ -98,8 +98,11 @@ export const Login = () => {
                             {/* Login Button */}
                             <div className="d-grid">
                                 <button type="submit" className="btn btn-outline-primary" disabled={isSubmitting}
-                                onClick={chnageButtonClicked}>
+                                        onClick={chnageButtonClicked}>
                                     {isSubmitting ? 'Logging in...' : 'Login'}
+                                </button>
+                                <button className="btn btn-outline-secondary mt-2"
+                                        onClick={()=>{navigate(USER_PATH+"/password-reset");}}> Forgot password
                                 </button>
                             </div>
                         </Form>

@@ -33,7 +33,7 @@ export const Register = () => {
                         return true;
                     } catch (error) {
                         setIsButtonCliced(false);
-                        console.log(error);
+                        console.log(error.response.data);
                         return this.createError({
                             path: 'email',
                             message: 'Invalid username or password'
