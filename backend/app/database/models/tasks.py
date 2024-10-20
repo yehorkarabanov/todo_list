@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import select, ForeignKey, update
+from sqlalchemy import select, ForeignKey, update, delete
 from app.database.base import Base
 
 
@@ -23,12 +23,24 @@ class Task(Base):
         return result.scalars().all()
 
     @classmethod
-    async def update_by_id(cls, db: AsyncSession, user: "User", id: int, data: dict):
-        query = update(cls).where(cls.id == id)
+    async def update_by_id(
+        cls, db: AsyncSession, user: "User", id: int, user_email: str, data: dict
+    ):
+        query = update(cls).where(
+            (cls.id == id) & (cls.user_id == user.get_query_id_from_email(user_email))
+        )
         for key, value in data.items():
             if value is not None:
                 query = query.values(**{key: value})
         await db.execute(query)
         await db.commit()
 
-
+    @classmethod
+    async def delete_by_id(
+        cls, db: AsyncSession, user: "User", id: int, user_email: str
+    ):
+        query = delete(cls).where(
+            (cls.id == id) & (cls.user_id == user.get_query_id_from_email(user_email))
+        )
+        await db.execute(query)
+        await db.commit()

@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import select
+from sqlalchemy import select, ForeignKey
 from app.user.hash import verify_password
 from app.database.base import Base
 
@@ -23,3 +23,7 @@ class User(Base):
         if not user or not verify_password(password, user.password):
             return False
         return user
+
+    @classmethod
+    def get_query_id_from_email(cls, email: str):
+        return select(cls.id).where(cls.email == email).scalar_subquery()
