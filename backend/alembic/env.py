@@ -9,7 +9,8 @@ from alembic import context
 
 from app.settings import settings
 from app.database.base import Base
-from app.user.models import User, Task  # noqa: F401
+from app.database.models.models import User  # noqa: F401
+from app.database.models.models import Task  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

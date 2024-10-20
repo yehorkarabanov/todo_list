@@ -20,7 +20,7 @@ from app.user.auth import (
     decode_token,
 )
 from app.database import db_helper
-from app.user import models
+from app.database.models import User
 from app.celery.worker import user_verify_mail_event
 from app.database.redis import add_token_jti_to_blacklist, check_token_in_blacklist
 
@@ -32,7 +32,7 @@ async def login(
     login_data: UserSchema,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    user = await models.User.authenticate(
+    user = await User.authenticate(
         session, login_data.email, login_data.password
     )
 
@@ -86,7 +86,7 @@ async def register(
     user_data: UserRegister,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    user_exists = await models.User.find_by_email(session, user_data.email)
+    user_exists = await User.find_by_email(session, user_data.email)
 
     if user_exists:
         raise HTTPException(
@@ -97,7 +97,7 @@ async def register(
     user_data = user_data.model_dump(exclude={"confirm_password"})
     user_data["password"] = get_password_hash(user_data["password"])
 
-    user = models.User(**user_data)
+    user = User(**user_data)
     await user.save(session)
 
     token = create_url_safe_token({"email": user_data["email"], "id": str(user.id)})
@@ -124,7 +124,7 @@ async def verify_user(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error accrued during verification",
         )
-    user = await models.User.find_by_id(session, user_id)
+    user = await User.find_by_id(session, user_id)
 
     if not user:
         raise HTTPException(
@@ -168,7 +168,7 @@ async def password_reset_request(
 ):
     email = email.email
 
-    if not (user := await models.User.find_by_email(session, email)):
+    if not (user := await User.find_by_email(session, email)):
         raise HTTPException(
             detail="No user with this email", status_code=status.HTTP_400_BAD_REQUEST
         )
@@ -193,7 +193,7 @@ async def password_reset_token(
         raise HTTPException(
             detail="Invalid token, no email", status_code=status.HTTP_400_BAD_REQUEST
         )
-    if not (user := await models.User.find_by_email(session, user_email)):
+    if not (user := await User.find_by_email(session, user_email)):
         raise HTTPException(
             detail="No user with this email", status_code=status.HTTP_400_BAD_REQUEST
         )
