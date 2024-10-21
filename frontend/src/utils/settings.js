@@ -8,6 +8,7 @@ export const VERIFY_MAIL_URL = BASE_URL + VERIFY_MAIL_PATH;
 export const PASSWORD_RESET_URL = BASE_URL + PASSWORD_RESET_PATH;
 
 export const USER_PATH = "/user";
+export const TASK_PATH = "/task";
 export const LOGIN_PATH = USER_PATH + "/login";
 export const REGISTER_PATH = USER_PATH + "/register";
 

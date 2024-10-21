@@ -3,15 +3,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.models import User, Task
 from app.database import db_helper
 from app.user.dependencies import AccessTokenBearer
-from app.task.schemas import TaskUpdate, TaskContent
+from app.task.schemas import TaskUpdate, TaskContent, TasksRespond, TaskRespond
 
-router = APIRouter(prefix="/tasks", tags=["tasks"])
+router = APIRouter(prefix="/task", tags=["tasks"])
 
 
-@router.get("/")
+@router.get("/", response_model=TasksRespond)
 async def get_all_tasks_for_user(
-        access_token_details: dict = Depends(AccessTokenBearer()),
-        session: AsyncSession = Depends(db_helper.session_dependency),
+    access_token_details: dict = Depends(AccessTokenBearer()),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ):
     task = await Task.find_by_user_email(
         db=session, user=User, email=access_token_details["user"]["email"]
@@ -21,10 +21,10 @@ async def get_all_tasks_for_user(
 
 @router.put("/{id}")
 async def update(
-        id: int,
-        task: TaskUpdate,
-        access_token_details: dict = Depends(AccessTokenBearer()),
-        session: AsyncSession = Depends(db_helper.session_dependency),
+    id: int,
+    task: TaskUpdate,
+    access_token_details: dict = Depends(AccessTokenBearer()),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ):
     await Task.update_by_id(
         session, User, id, access_token_details["user"]["email"], task.model_dump()
@@ -32,11 +32,11 @@ async def update(
     return {"message": "Task updated successfully"}
 
 
-@router.post("/")
+@router.post("/", response_model=TaskRespond)
 async def create(
-        content: TaskContent,
-        access_token_details: dict = Depends(AccessTokenBearer()),
-        session: AsyncSession = Depends(db_helper.session_dependency),
+    content: TaskContent,
+    access_token_details: dict = Depends(AccessTokenBearer()),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ):
     task = Task()
     task.content = content.content
@@ -45,14 +45,14 @@ async def create(
 
     await task.save(session)
 
-    return {"message": "Task created successfully"}
+    return task
 
 
 @router.delete("/{id}")
 async def delete(
-        id: int,
-        access_token_details: dict = Depends(AccessTokenBearer()),
-        session: AsyncSession = Depends(db_helper.session_dependency),
+    id: int,
+    access_token_details: dict = Depends(AccessTokenBearer()),
+    session: AsyncSession = Depends(db_helper.session_dependency),
 ):
     await Task.delete_by_id(session, User, id, access_token_details["user"]["email"])
     return {"message": "Task deleted successfully"}

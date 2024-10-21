@@ -5,6 +5,7 @@ import {useDispatch} from "react-redux";
 import {setTokens} from "../../redux/slices/userSlice";
 import {delay} from "lodash"
 import axios from "axios";
+import {getTasks} from "../../redux/slices/taskSlice";
 
 export const UserVerify = () => {
     const dispatch = useDispatch();
@@ -24,6 +25,7 @@ export const UserVerify = () => {
             setMessage('Your email has been successfully verified!');
 
             dispatch(setTokens(response.data));
+            dispatch(getTasks());
 
             delay(() => {
                 navigate("/");

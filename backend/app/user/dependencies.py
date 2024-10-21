@@ -18,11 +18,11 @@ class TokenBearer(HTTPBearer):
 
         if not token_data:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token"
+                status_code=status.HTTP_400_BAD_REQUEST, detail=f"Invalid {token_data} token"
             )
         if await check_token_in_blacklist(token_data["jti"]):
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token"
+                status_code=status.HTTP_400_BAD_REQUEST, detail=f"Invalid {token_data} token"
             )
         self.verify_token_data(token_data)
         return token_data

@@ -18,7 +18,7 @@ class Task(Base):
 
     @classmethod
     async def find_by_user_email(cls, db: AsyncSession, user: "User", email: str):
-        query = select(cls).join(user, user.email == email)
+        query = select(cls).join(user).where(user.email == email)
         result = await db.execute(query)
         return result.scalars().all()
 

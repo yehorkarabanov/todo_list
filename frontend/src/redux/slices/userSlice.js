@@ -31,7 +31,7 @@ export const fullLogOut = createAsyncThunk("user/fullLogOut", async (params, {di
         });
         dispatch(logOut());
     } catch (e) {
-        console.log(e);
+        console.log("Error while logout");
     }
 });
 

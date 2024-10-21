@@ -72,7 +72,7 @@ export const PasswordResetToken = () => {
             <div className="container d-flex justify-content-center align-items-center mt-5"
                  style={{minHeight: "600px"}}>
                 <div className="col-md-4">
-                    <h3 className="text-center mb-4">Register</h3>
+                    <h3 className="text-center mb-4">Password Reset</h3>
 
                     <Formik
                         initialValues={initialValues}
@@ -119,9 +119,9 @@ export const PasswordResetToken = () => {
             </div>
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Email sent successfully</Modal.Title>
+                    <Modal.Title>Password reset successfully</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>This may take coupe minutes to get a mail.</Modal.Body>
+                <Modal.Body>You can now login with new password.</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
                         Close

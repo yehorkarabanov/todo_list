@@ -10,3 +10,13 @@ class TaskUpdate(BaseModel):
 
 class TaskContent(BaseModel):
     content: str
+
+
+class TaskRespond(BaseModel):
+    id: int
+    content: str
+    is_completed: bool
+
+
+class TasksRespond(BaseModel):
+    data: list[TaskRespond]

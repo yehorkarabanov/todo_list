@@ -2,12 +2,14 @@ import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {fullLogOut, logOut} from "../../redux/slices/userSlice";
+import {clearTasks} from "../../redux/slices/taskSlice";
 export const Logout = () => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
     useEffect(() => {
         if (user.isLogin) {
             dispatch(fullLogOut()).catch(err => console.log(err));
+            dispatch(clearTasks());
         }
     }, []);
     return (

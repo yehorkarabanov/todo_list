@@ -1,58 +1,57 @@
 import React, {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {
+    addNewTask,
+    cancelEditTask, createTaskBackend,
+    deleteTaskBackend,
+    editTask,
+    handleChangeTask, saveContendTaskBackend,
+    toggleCompleteTaskBackend,
+} from "../../redux/slices/taskSlice";
 
 export const TodoList = () => {
-    const [todos, setTodos] = useState([
-        {id: 1, text: 'Learn React', completed: false, editing: false, originalText: ''},
-        {id: 2, text: 'Build a To-Do App', completed: false, editing: false, originalText: ''}
-    ]);
-
+    const dispatch = useDispatch();
+    const tasks = useSelector((state) => state.tasks.items);
     const [newTodo, setNewTodo] = useState('');
 
-    // Toggle mark complete
     const markComplete = (id) => {
-        setTodos(todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed} : todo));
+        dispatch(toggleCompleteTaskBackend({id: id}));
     };
 
     const deleteTodo = (id) => {
-        setTodos(todos.filter(todo => todo.id !== id));
+        dispatch(deleteTaskBackend({id: id}));
     };
 
     // Start editing, save original text
     const editTodo = (id) => {
-        setTodos(todos.map(todo =>
-            todo.id === id ? {...todo, editing: true, originalText: todo.text} : todo
-        ));
+        dispatch(editTask({id: id}));
     };
 
 
     const saveTodo = (id) => {
-        setTodos(todos.map(todo =>
-            todo.id === id ? {...todo, editing: false, originalText: ''} : todo
-        ));
+        dispatch(saveContendTaskBackend({id: id}));
     };
 
     // Cancel editing, revert to original text
     const cancelEdit = (id) => {
-        setTodos(todos.map(todo =>
-            todo.id === id ? {...todo, editing: false, text: todo.originalText, originalText: ''} : todo
-        ));
+        dispatch(cancelEditTask({id: id}));
     };
 
     // Handle text change in edit mode
     const handleChange = (id, event) => {
         const newText = event.target.value;
-        setTodos(todos.map(todo => todo.id === id ? {...todo, text: newText} : todo));
+        dispatch(handleChangeTask({id: id, newText: newText}));
     };
 
     const addNewTodo = () => {
         if (newTodo.trim()) {
-            setTodos([...todos, {id: Date.now(), text: newTodo, completed: false, editing: false, originalText: ''}]);
+            dispatch(createTaskBackend({content: newTodo}));
             setNewTodo('');  // Clear the input field after adding
         }
     };
 
     return (
-        <div style={{minHeight:"620px"}}>
+        <div style={{minHeight: "620px"}}>
             <div className="container d-flex flex-column justify-content-center mt-5">
                 <div className="mb-4">
                     <div className="input-group">
@@ -70,41 +69,41 @@ export const TodoList = () => {
                 </div>
 
                 <ul className="list-group">
-                    {todos.map(todo => (
-                        <li key={todo.id}
-                            className={`list-group-item d-flex justify-content-between align-items-center ${todo.completed ? 'text-decoration-line-through text-muted' : ''}`}>
-                            {todo.editing ? (
+                    {tasks.map(task => (
+                        <li key={task.id}
+                            className={`list-group-item d-flex justify-content-between align-items-center ${task.is_completed ? 'text-decoration-line-through text-muted' : ''}`}>
+                            {task.editing ? (
                                 <input
                                     type="text"
                                     className="form-control me-2"
-                                    value={todo.text}
-                                    onChange={(e) => handleChange(todo.id, e)}
+                                    value={task.content}
+                                    onChange={(e) => handleChange(task.id, e)}
                                 />
                             ) : (
-                                <span className="flex-grow-1">{todo.text}</span>
+                                <span className="flex-grow-1">{task.content}</span>
                             )}
 
-                            {todo.editing ? (
+                            {task.editing ? (
                                 <div style={{minWidth: "140px"}}>
                                     <button className="btn btn-outline-success me-2"
-                                            onClick={() => saveTodo(todo.id)}>Save
+                                            onClick={() => saveTodo(task.id)}>Save
                                     </button>
                                     <button className="btn btn-outline-secondary"
-                                            onClick={() => cancelEdit(todo.id)}>Cancel
+                                            onClick={() => cancelEdit(task.id)}>Cancel
                                     </button>
                                 </div>
                             ) : (
                                 <>
                                     <div>
                                         <button className="btn btn-outline-primary me-2"
-                                                onClick={() => markComplete(todo.id)}>
-                                            {todo.completed ? 'Undo' : 'Complete'}
+                                                onClick={() => markComplete(task.id)}>
+                                            {task.is_completed ? 'Undo' : 'Complete'}
                                         </button>
                                         <button className="btn btn-outline-warning me-2"
-                                                onClick={() => editTodo(todo.id)}>Edit
+                                                onClick={() => editTodo(task.id)}>Edit
                                         </button>
                                         <button className="btn btn-outline-danger"
-                                                onClick={() => deleteTodo(todo.id)}>Delete
+                                                onClick={() => deleteTodo(task.id)}>Delete
                                         </button>
                                     </div>
                                 </>

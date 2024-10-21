@@ -24,7 +24,7 @@ from app.database.models import User
 from app.celery.worker import user_verify_mail_event
 from app.database.redis import add_token_jti_to_blacklist, check_token_in_blacklist
 
-router = APIRouter(prefix="/user")
+router = APIRouter(prefix="/user", tags=["users"])
 
 
 @router.post("/login")
@@ -32,9 +32,7 @@ async def login(
     login_data: UserSchema,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    user = await User.authenticate(
-        session, login_data.email, login_data.password
-    )
+    user = await User.authenticate(session, login_data.email, login_data.password)
 
     if not user:
         raise HTTPException(
@@ -158,7 +156,9 @@ async def logout(
     refresh: RefreshToken, access_token_details: dict = Depends(AccessTokenBearer())
 ):
     refresh_token_details = decode_token(refresh.refresh_token)
-    await add_token_jti_to_blacklist((access_token_details["jti"], refresh_token_details["jti"]))
+    await add_token_jti_to_blacklist(
+        (access_token_details["jti"], refresh_token_details["jti"])
+    )
     return {"message": "Logged out"}
 
 

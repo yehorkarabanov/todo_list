@@ -7,6 +7,7 @@ import {setTokens} from "../../redux/slices/userSlice";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import {baseAxiosSettings, USER_PATH} from "../../utils/settings";
+import {getTasks} from "../../redux/slices/taskSlice";
 
 export const Login = () => {
     const dispatch = useDispatch();
@@ -32,6 +33,7 @@ export const Login = () => {
                             password: value
                         });
                         dispatch(setTokens(response.data));
+                        dispatch(getTasks());
 
                         setIsButtonCliced(false);
                         return true;
