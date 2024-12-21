@@ -26,12 +26,14 @@ from app.database.redis import add_token_jti_to_blacklist, check_token_in_blackl
 
 router = APIRouter(prefix="/user", tags=["users"])
 
+import cowsay
 
 @router.post("/login")
 async def login(
     login_data: UserSchema,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
+    cowsay.cow("Hello")
     user = await User.authenticate(session, login_data.email, login_data.password)
 
     if not user:

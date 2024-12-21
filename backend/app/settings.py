@@ -34,9 +34,11 @@ class Settings(BaseSettings):
 
     POSTGRES_PORT: int = os.getenv("POSTGRES_PORT", 5432)
     POSTGRES_DB: str = os.getenv("POSTGRES_DB", "todolist")
+    POSTGRES_TEST_DB: str = os.getenv("POSTGRES_TEST_DB", "todolisttest")
     POSTGRES_USER: str = os.getenv("POSTGRES_USER", "admin")
     POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "admin")
     DATABASE_URL: str = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@postgres:{POSTGRES_PORT}/{POSTGRES_DB}"
+    TEST_DATABASE_URL: str = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@postgres:{POSTGRES_PORT}/{POSTGRES_TEST_DB}"
 
     DEBUG: bool = os.getenv("DEBUG", False)
 

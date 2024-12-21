@@ -20,4 +20,8 @@ COPY pyproject.toml poetry.lock /code/
 
 RUN poetry install --no-interaction --no-ansi
 
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
 COPY ./app /code/app
