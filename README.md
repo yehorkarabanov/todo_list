@@ -2,6 +2,9 @@
 
 A simple and efficient todo list application to help you manage tasks and boost productivity.
 
+## DeepWiki link
+[My Deepwiki Page](https://deepwiki.com/yehorkarabanov/todo_list)
+
 ## Features
 
 - Add, edit, and delete tasks.
